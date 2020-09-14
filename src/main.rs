@@ -11,8 +11,8 @@ mod ci_uy {
 
     // Cleans up anything in the string that is not a digit and pre-pends a "0"
     // in case it's a 6 digit cedula (excluding the verifying digit)
-    pub fn transform(cedula: String) -> String{
-        let mut limpia : String;
+    pub fn transform(cedula: String) -> String {
+        let mut limpia: String;
         let re = Regex::new(r"\D").unwrap();
 
         limpia = re.replace_all(&cedula, "").to_string();
@@ -22,13 +22,15 @@ mod ci_uy {
             temp.push_str(&limpia);
             limpia = temp;
         }
-        return limpia;
+        limpia
     }
 
     pub fn validate(input_string: String) -> bool {
         let cedula = transform(input_string);
 
-        if cedula.len() < 6 { return false; }
+        if cedula.len() < 6 {
+            return false;
+        }
 
         let mut char_vec: Vec<char> = cedula.chars().collect();
         let valid_vec = vec![2, 9, 8, 7, 6, 3, 4];
@@ -37,14 +39,11 @@ mod ci_uy {
         let digit = char_vec.pop().unwrap();
 
         for i in 0..char_vec.len() {
-            sum_vec.push(
-                char_vec[i].to_digit(10).unwrap_or(0)
-                    * valid_vec[i]
-            );
+            sum_vec.push(char_vec[i].to_digit(10).unwrap_or(0) * valid_vec[i]);
         }
         let suma: u32 = sum_vec.iter().sum();
         let ver_digit = 10 - (suma % 10);
-        return digit == char::from_digit(ver_digit, 10).unwrap();
+        digit == char::from_digit(ver_digit, 10).unwrap()
     }
 }
 
@@ -55,7 +54,7 @@ fn main() {
 }
 
 #[cfg(test)]
-mod tests{
+mod tests {
     use super::*;
 
     #[test]
@@ -83,7 +82,7 @@ mod tests{
     }
 
     #[test]
-    fn test_doesnae_validate_numbers_smaller_than_100_000(){
+    fn test_doesnae_validate_numbers_smaller_than_100_000() {
         assert!(!ci_uy::validate("12345".to_string()));
         assert!(!ci_uy::validate("17".to_string()));
         assert!(!ci_uy::validate("34.993".to_string()));
